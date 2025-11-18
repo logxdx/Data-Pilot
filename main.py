@@ -1,16 +1,11 @@
 import asyncio
-
 from cli.ui import run_cli
-
-from agent_runtime import get_agent_registry
-
-
-agents, primary_agent = get_agent_registry()
+from my_agents import analysis_agent
 
 
 async def main():
     """Main conversation loop"""
-    await run_cli(agents, primary_agent)
+    await run_cli(analysis_agent.agent)
 
 
 if __name__ == "__main__":

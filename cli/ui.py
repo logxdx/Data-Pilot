@@ -24,7 +24,7 @@ from rich.console import Console, Group
 from rich.live import Live
 from rich.markdown import Markdown
 from rich.panel import Panel
-from rich.prompt import Prompt, IntPrompt
+from rich.prompt import Prompt
 from rich.rule import Rule
 from rich.table import Table
 from rich.text import Text
@@ -84,88 +84,6 @@ def welcome_panel():
         ),
         justify="center",
     )
-
-
-def select_hierarchy_mode():
-    """
-    Prompt user to select hierarchy mode.
-    """
-    console.print("[bold white]\nChoose your preferred interaction mode:[/bold white]")
-    console.print(
-        "1. [red]Managerial[/red] - Triage agent manages all interactions behind the scenes [bold dim](default)[/bold dim]"
-    )
-    console.print(
-        "2. [red]Collaborative[/red] - Agents can handoff directly to each other"
-    )
-    console.print()
-
-    while True:
-        mode_choice = IntPrompt.ask("Mode", choices=["1", "2"], default="1")
-        if mode_choice == "1":
-            hierarchy_mode = "managerial"
-            console.print("[bold red]Managerial mode[/bold red]")
-            break
-        else:
-            hierarchy_mode = "collaborative"
-            console.print("[bold red]Collaborative mode[/bold red]")
-            break
-    return hierarchy_mode
-
-
-def handle_agents_command(user_msg: str, agents: dict, agent: Agent) -> Agent:
-    """
-    Handle `/agent` command for listing and switching agents.
-    """
-    parts = user_msg.split()
-    agents_table = Table(
-        title="Available Agents",
-        show_header=True,
-        header_style="bold white",
-        expand=True,
-        box=box.ROUNDED,
-        padding=(0, 1),
-    )
-    agents_table.add_column("Key", style="bold red")
-    agents_table.add_column("Agent", style="white")
-
-    if len(parts) == 1:
-        agents_panel = Text()
-        agents_panel.append("\n")
-        for key, value in agents.items():
-            agents_panel.append(
-                f"  {key}: {str(value.name).capitalize()}\n", style="white"
-            )
-            agents_table.add_row(key, str(value.name).capitalize())
-        agents_panel.append(
-            "\nUse /agents <name> OR /a <name> to talk to a specific agent.\n",
-            style="bold red",
-        )
-        console.print(
-            Group(
-                agents_table,
-                Text(
-                    "Use /agents <key> OR /a <key> to talk to a specific agent.",
-                    style="bold white",
-                ),
-            ),
-            justify="center",
-        )
-
-    elif len(parts) == 2:
-        agent_name = parts[1].lower()
-        if agent_name in agents:
-            agent = agents[agent_name]
-            console.print(
-                f"[bold dim]Switched to {str(agent.name).capitalize()}[/bold dim]"
-            )
-            return agent
-        else:
-            console.print(f"[bold red]Unknown agent: {agent_name}[/bold red]")
-
-    else:
-        console.print("[bold red]Usage: /agents or /a <name>[/bold red]")
-
-    return agent
 
 
 # Display conversation history
@@ -270,50 +188,38 @@ def help_panel():
 
 
 # Quit application
-def handle_quit(user_msg, inputs, agent, agents):
-    return (True, True, inputs, agent, agents)
+def handle_quit(inputs, agent):
+    return (True, True, inputs)
 
 
 # Clear conversation
-def handle_clear(user_msg, inputs, agent, agents):
+def handle_clear(inputs, agent):
     console.clear()
     current_display = str(agent.name).capitalize()
     console.print(f"[dim]Current agent: {current_display}[/dim]")
-    return (False, True, inputs, agent, agents)
+    return (False, True, inputs)
 
 
 # Show conversation history
-def handle_history(user_msg, inputs, agent, agents):
+def handle_history(inputs, agent):
     display_history(inputs)
-    return (False, True, inputs, agent, agents)
-
-
-# Change hierarchy mode
-def handle_hierarchy(user_msg, inputs, agent, agents):
-    hierarchy_mode = select_hierarchy_mode()
-    return (False, True, inputs, agent, agents)
+    return (False, True, inputs)
 
 
 # Show help panel
-def handle_help(user_msg, inputs, agent, agents):
+def handle_help(inputs, agent):
     help_panel()
-    return (False, True, inputs, agent, agents)
+    return (False, True, inputs)
 
 
 # Clear conversation history
-def handle_clear_history(user_msg, inputs, agent, agents):
+def handle_clear_history(inputs, agent):
     inputs.clear()
     console.clear()
     console.print("[bold red]🔄 Conversation history cleared![/bold red]\n")
     current_display = str(agent.name).capitalize()
     console.print(f"[dim]Current agent: {current_display}[/dim]")
-    return (False, True, inputs, agent, agents)
-
-
-# List and switch agents
-def handle_agents(user_msg, inputs, agent, agents):
-    agent = handle_agents_command(user_msg, agents, agent)
-    return (False, True, inputs, agent, agents)
+    return (False, True, inputs)
 
 
 # Command registry
@@ -348,15 +254,15 @@ COMMANDS = {
 
 # Handle slash commands
 def slash_commands(
-    user_msg: str, inputs: list[TResponseInputItem], agent: Agent, agents: dict
-) -> tuple[bool, bool, list[TResponseInputItem], Agent, dict]:
+    user_msg: str, inputs: list[TResponseInputItem], agent: Agent
+) -> tuple[bool, bool, list[TResponseInputItem]]:
     """
     Handle special commands like quit and clear.
     """
     for cmd_info in COMMANDS.values():
         if user_msg.lower().split()[0] in [a.lower() for a in cmd_info["aliases"]]:
-            return cmd_info["handler"](user_msg, inputs, agent, agents)
-    return (False, False, inputs, agent, agents)
+            return cmd_info["handler"](inputs, agent)
+    return (False, False, inputs)
 
 
 # Stream agent response with rich live updates
@@ -566,7 +472,7 @@ async def stream_agent_response(
 
 
 # Main CLI loop
-async def run_cli(agents: dict[str, Agent], starting_agent: Agent):
+async def run_cli(starting_agent: Agent):
     """
     Main conversation loop
 
@@ -598,10 +504,9 @@ async def run_cli(agents: dict[str, Agent], starting_agent: Agent):
                 user_msg += "\n" + next_line
                 user_msg = user_msg.strip()
             user_msg = user_msg.replace("<ml>", "").replace("</ml>", "").strip()
+
         # Handle special commands
-        (quit_flag, skip, inputs, agent, agents) = slash_commands(
-            user_msg.lower(), inputs, agent, agents
-        )
+        (quit_flag, skip, inputs) = slash_commands(user_msg.lower(), inputs, agent)
         if quit_flag:
             break
         if skip:
