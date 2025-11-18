@@ -12,34 +12,9 @@ MAX_TURNS = 20
 # Individual configurations for each agent
 ONLINE_CONFIG = {
     "PERSONALITY": "omen",
-    "triage_agent": {
-        "BASE_URL": os.getenv("CEREBRAS_BASE_URL"),
-        "API_KEY": os.getenv("TRIAGE_API_KEY"),
-        "MODEL_NAME": "openai/qwen-3-235b-a22b-instruct-2507",
-    },
-    "web_search_agent": {
-        "BASE_URL": os.getenv("CEREBRAS_BASE_URL"),
-        "API_KEY": os.getenv("WEB_SEARCH_API_KEY"),
-        "MODEL_NAME": "openai/gpt-oss-120b",
-    },
     "filesystem_agent": {
         "BASE_URL": os.getenv("CEREBRAS_BASE_URL"),
         "API_KEY": os.getenv("FILESYSTEM_API_KEY"),
-        "MODEL_NAME": "openai/gpt-oss-120b",
-    },
-    "ideation_agent": {
-        "BASE_URL": os.getenv("CEREBRAS_BASE_URL"),
-        "API_KEY": os.getenv("IDEATION_API_KEY"),
-        "MODEL_NAME": "openai/gpt-oss-120b",
-    },
-    "study_agent": {
-        "BASE_URL": os.getenv("CEREBRAS_BASE_URL"),
-        "API_KEY": os.getenv("STUDY_API_KEY"),
-        "MODEL_NAME": "openai/gpt-oss-120b",
-    },
-    "memory_agent": {
-        "BASE_URL": os.getenv("CEREBRAS_BASE_URL"),
-        "API_KEY": os.getenv("MEMORY_API_KEY"),
         "MODEL_NAME": "openai/gpt-oss-120b",
     },
     "analysis_agent": {
@@ -52,18 +27,7 @@ ONLINE_CONFIG = {
         "API_KEY": os.getenv("CONTEXT_API_KEY"),
         "MODEL_NAME": "openai/gpt-oss-120b",
     },
-    "tts_summarizer": {
-        "BASE_URL": os.getenv("OLLAMA_BASE_URL"),
-        "API_KEY": os.getenv("CONTEXT_API_KEY"),
-        "MODEL_NAME": "LFM2:700M",
-    },
-    "scraper": {
-        "BASE_URL": os.getenv("CEREBRAS_BASE_URL"),
-        "API_KEY": os.getenv("STUDY_API_KEY"),
-        "MODEL_NAME": "openai/gpt-oss-120b",
-    },
 }
-
 
 # Select configuration based on environment
 AGENT_CONFIGS = ONLINE_CONFIG
