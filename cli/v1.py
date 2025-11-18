@@ -445,21 +445,21 @@ COMMANDS = {
         "description": "Show conversation history",
         "handler": handle_history,
     },
-    "agents": {
-        "aliases": ["/agents", "/a"],
-        "description": "List and switch agents",
-        "handler": handle_agents,
-    },
-    "hierarchy": {
-        "aliases": ["/hierarchy", "/hmode"],
-        "description": "Change hierarchy mode",
-        "handler": handle_hierarchy,
-    },
-    "context": {
-        "aliases": ["/context", "/ctx"],
-        "description": "Toggle context agent for memory",
-        "handler": handle_context,
-    },
+    # "agents": {
+    #     "aliases": ["/agents", "/a"],
+    #     "description": "List and switch agents",
+    #     "handler": handle_agents,
+    # },
+    # "hierarchy": {
+    #     "aliases": ["/hierarchy", "/hmode"],
+    #     "description": "Change hierarchy mode",
+    #     "handler": handle_hierarchy,
+    # },
+    # "context": {
+    #     "aliases": ["/context", "/ctx"],
+    #     "description": "Toggle context agent for memory",
+    #     "handler": handle_context,
+    # },
     "clear": {
         "aliases": ["/clear", "/c"],
         "description": "Clear screen",
@@ -740,9 +740,9 @@ async def run_cli(agents: dict[str, Agent], starting_agent: Agent):
     tts_client: TTS = None  # type: ignore
     session_context: str = ""
     try:
-        hierarchy_mode = select_hierarchy_mode()
+        hierarchy_mode = "managerial"
         interaction_mode = "TEXT"
-        use_context_agent = select_context_agent_mode()
+        use_context_agent = False
     except Exception as e:
         raise Exception(f"Error selecting modes")
     agent = starting_agent
