@@ -28,7 +28,6 @@ dependencies = [
     "scipy==1.14.1",
     "seaborn==0.13.2",
     "rich>=14.1.0",
-    "spider-rs==0.0.57",
     "statsmodels==0.14.4",
     "yt-dlp==2025.9.5",
     "docling==2.55.1",

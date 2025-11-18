@@ -1146,7 +1146,6 @@ dependencies = [
     { name = "scikit-learn" },
     { name = "scipy" },
     { name = "seaborn" },
-    { name = "spider-rs" },
     { name = "statsmodels" },
     { name = "yt-dlp" },
 ]
@@ -1178,7 +1177,6 @@ requires-dist = [
     { name = "scikit-learn", specifier = "==1.5.2" },
     { name = "scipy", specifier = "==1.14.1" },
     { name = "seaborn", specifier = "==0.13.2" },
-    { name = "spider-rs", specifier = "==0.0.57" },
     { name = "statsmodels", specifier = "==0.14.4" },
     { name = "yt-dlp", specifier = "==2025.9.5" },
 ]
@@ -5101,15 +5099,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/6d/e6/21ccce3262dd4889aa3332e5a119a3491a95e8f60939870a3a035aabac0d/soupsieve-2.8.tar.gz", hash = "sha256:e2dd4a40a628cb5f28f6d4b0db8800b8f581b65bb380b97de22ba5ca8d72572f", size = 103472 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/14/a0/bb38d3b76b8cae341dad93a2dd83ab7462e6dbcdd84d43f54ee60a8dc167/soupsieve-2.8-py3-none-any.whl", hash = "sha256:0cc76456a30e20f5d7f2e14a98a4ae2ee4e5abdc7c5ea0aafe795f344bc7984c", size = 36679 },
-]
-
-[[package]]
-name = "spider-rs"
-version = "0.0.57"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/12/6b/0da3c8484c7247f7c6d1f8131336cb26ec879be5264d5c9351aa286fb108/spider_rs-0.0.57.tar.gz", hash = "sha256:34b95a194c74182f65974f89ba1a156c342f2eacedc1ab339aacd913677cba5e", size = 50197 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e3/79/bd2fd2d585f33dba91893f997637fb84e2e183d43a25a98912c2d5c9f88f/spider_rs-0.0.57-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:0c67c9766badae64d82acc4e06104af80de27ff53c71345a0de1acf6b8aa63d9", size = 12201782 },
 ]
 
 [[package]]

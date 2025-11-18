@@ -59,29 +59,6 @@ def get_weather_info(location: str) -> str:
     return get_weather(location)
 
 
-###############
-# URL Scraper #
-###############
-from tools.utils.scraper import scrape_page
-
-
-@function_tool
-def scrape_url(url: str, summarise: bool = False, instructions: str = "") -> str:
-    """
-    Scrape a webpage and return the content.
-
-    Args:
-        url (str): The URL of the webpage to scrape.
-        summarise (bool): Use LLM to summarise the converted markdown content. Defaults to False.
-        instructions (str): Works in conjunction with summarization. Special instructions on what information to extract.
-
-    Returns:
-        The scraped content.
-    """
-    result = scrape_page(url, summarise=summarise, instructions=instructions)
-    return str(result)
-
-
 ##########################
 # Audio & Video Download #
 ##########################
@@ -116,7 +93,6 @@ def download_video(url: str) -> str:
 WEB_TOOLS = [
     open_url_in_browser,
     get_weather_info,
-    scrape_url,
     download_audio,
     download_video,
 ]

@@ -133,7 +133,7 @@ from pydantic import BaseModel
 
 
 # Default configuration
-BASE_URL = "http://localhost:9090/search"
+BASE_URL = "https://search.rhscz.eu/"
 
 
 class SearchResult(BaseModel):
