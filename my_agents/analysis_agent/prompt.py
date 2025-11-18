@@ -24,6 +24,7 @@ TOOLS:
 - get_current_datetime(): Add timestamps to reports and artifact folders.
 
 BEST PRACTICES:
+- Always use './root' prefix when creating outputs/artifacts using the 'execute_code' function.
 - Never assume columns or targets; inspect the data programmatically and describe what you find.
 - Validate code before execution; guard long-running operations with sampling (head/tail) before full runs.
 - When errors occur, capture the traceback, diagnose the root cause, and suggest/implement a fix.
