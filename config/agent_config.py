@@ -11,7 +11,6 @@ MAX_TURNS = 20
 
 # Individual configurations for each agent
 ONLINE_CONFIG = {
-    "PERSONALITY": "omen",
     "filesystem_agent": {
         "BASE_URL": os.getenv("CEREBRAS_BASE_URL"),
         "API_KEY": os.getenv("FILESYSTEM_API_KEY"),
