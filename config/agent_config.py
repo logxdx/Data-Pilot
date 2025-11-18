@@ -4,71 +4,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Version
-Version = "1.3.0"
+Version = "3.1.4"
 
 # Global max turns for agent interactions
 MAX_TURNS = 20
-
-# Global word buffer size for streaming text-to-speech
-WORD_BUFFER_SIZE = 10
-
-# Online or Local
-LOCAL = False
-
-# Individual configurations for each agent
-LOCAL_CONFIG = {
-    "PERSONALITY": "omen",
-    "triage_agent": {
-        "BASE_URL": os.getenv("OLLAMA_BASE_URL"),
-        "API_KEY": os.getenv("TRIAGE_API_KEY"),
-        "MODEL_NAME": "openai/Granite4:3b",
-    },
-    "web_search_agent": {
-        "BASE_URL": os.getenv("OLLAMA_BASE_URL"),
-        "API_KEY": os.getenv("WEB_SEARCH_API_KEY"),
-        "MODEL_NAME": "openai/Granite4:3b",
-    },
-    "filesystem_agent": {
-        "BASE_URL": os.getenv("OLLAMA_BASE_URL"),
-        "API_KEY": os.getenv("FILESYSTEM_API_KEY"),
-        "MODEL_NAME": "openai/Granite4:3b",
-    },
-    "ideation_agent": {
-        "BASE_URL": os.getenv("OLLAMA_BASE_URL"),
-        "API_KEY": os.getenv("IDEATION_API_KEY"),
-        "MODEL_NAME": "openai/Granite4:3b",
-    },
-    "study_agent": {
-        "BASE_URL": os.getenv("OLLAMA_BASE_URL"),
-        "API_KEY": os.getenv("STUDY_API_KEY"),
-        "MODEL_NAME": "openai/Granite4:3b",
-    },
-    "memory_agent": {
-        "BASE_URL": os.getenv("OLLAMA_BASE_URL"),
-        "API_KEY": os.getenv("MEMORY_API_KEY"),
-        "MODEL_NAME": "openai/Granite4:3b",
-    },
-    "analysis_agent": {
-        "BASE_URL": os.getenv("OLLAMA_BASE_URL"),
-        "API_KEY": os.getenv("ANALYSIS_API_KEY"),
-        "MODEL_NAME": "openai/Granite4:3b",
-    },
-    "context_manager_agent": {
-        "BASE_URL": os.getenv("OLLAMA_BASE_URL"),
-        "API_KEY": os.getenv("CONTEXT_API_KEY"),
-        "MODEL_NAME": "openai/Granite4:3b",
-    },
-    "tts_summarizer": {
-        "BASE_URL": os.getenv("OLLAMA_BASE_URL"),
-        "API_KEY": os.getenv("CONTEXT_API_KEY"),
-        "MODEL_NAME": "Granite4:3b",
-    },
-    "scraper": {
-        "BASE_URL": os.getenv("OLLAMA_BASE_URL"),
-        "API_KEY": os.getenv("CONTEXT_API_KEY"),
-        "MODEL_NAME": "openai/LFM2:700M",
-    },
-}
 
 # Individual configurations for each agent
 ONLINE_CONFIG = {
@@ -127,4 +66,4 @@ ONLINE_CONFIG = {
 
 
 # Select configuration based on environment
-AGENT_CONFIGS = LOCAL_CONFIG if LOCAL else ONLINE_CONFIG
+AGENT_CONFIGS = ONLINE_CONFIG

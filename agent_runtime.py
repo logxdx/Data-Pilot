@@ -34,7 +34,7 @@ def _configure_agents() -> None:
     triage_agent.add_handoffs([web_search_agent, filesystem_agent])
     web_search_agent.add_handoffs([])
     filesystem_agent.add_handoffs([])
-    analysis_agent.add_handoffs([web_search_agent, filesystem_agent])
+    analysis_agent.add_handoffs([web_search_agent])
     ideation_agent.add_handoffs([web_search_agent])
     study_agent.add_handoffs([web_search_agent, filesystem_agent, analysis_agent])
 
