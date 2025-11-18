@@ -5,7 +5,6 @@ from tools.filesystem_tools import FILESYSTEM_TOOLS
 from tools.context_manager_tools import CONTEXT_TOOLS
 from tools.data_tools import DATA_ANALYSIS_TOOLS
 from tools.automation_tools import AUTOMATION_TOOLS
-from tools.mem0_tools import MEM0_TOOLS
 from .prompt import ANALYSIS_AGENT_SYSTEM_PROMPT, ANALYSIS_AGENT_HANDOFF_INSTRUCTIONS
 
 
@@ -18,7 +17,6 @@ ANALYSIS_AGENT_TOOLS = (
     + DATA_ANALYSIS_TOOLS
     + AUTOMATION_TOOLS
     + CONTEXT_TOOLS
-    + MEM0_TOOLS
 )
 
 analysis_agent = my_agent(
