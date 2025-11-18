@@ -1,5 +1,5 @@
-from typing import List
 import json
+from typing import List
 
 from openai.types.responses import (
     ResponseTextDeltaEvent,
@@ -16,6 +16,9 @@ from agents import (
     AgentUpdatedStreamEvent,
     set_tracing_disabled,
 )
+
+set_tracing_disabled(disabled=True)
+
 from rich import box
 from rich.console import Console, Group
 from rich.live import Live
@@ -26,14 +29,7 @@ from rich.rule import Rule
 from rich.table import Table
 from rich.text import Text
 
-from .art import get_art
 from config.agent_config import Version, MAX_TURNS
-
-# from stt.WhisperSTT import STT
-from my_agents import context_agent
-
-
-set_tracing_disabled(disabled=True)
 
 
 CONSOLE_WIDTH = 120
@@ -42,7 +38,14 @@ console.clear()
 
 MESSAGE_HISTORY: list[TResponseInputItem] = []
 
-welcome_art = get_art()
+welcome_art = """
+░██╗░░░░░░░██╗███████╗██╗░░░░░░█████╗░░█████╗░███╗░░░███╗███████╗
+░██║░░██╗░░██║██╔════╝██║░░░░░██╔══██╗██╔══██╗████╗░████║██╔════╝
+░╚██╗████╗██╔╝█████╗░░██║░░░░░██║░░╚═╝██║░░██║██╔████╔██║█████╗░░
+░░████╔═████║░██╔══╝░░██║░░░░░██║░░██╗██║░░██║██║╚██╔╝██║██╔══╝░░
+░░╚██╔╝░╚██╔╝░███████╗███████╗╚█████╔╝╚█████╔╝██║░╚═╝░██║███████╗
+░░░╚═╝░░░╚═╝░░╚══════╝╚══════╝░╚════╝░░╚════╝░╚═╝░░░░░╚═╝╚══════╝
+"""
 
 
 def welcome_panel():
@@ -107,30 +110,6 @@ def select_hierarchy_mode():
             console.print("[bold red]Collaborative mode[/bold red]")
             break
     return hierarchy_mode
-
-
-def select_context_agent_mode():
-    """
-    Prompt user to select whether to use context agent for memory.
-    """
-    console.print(
-        "[bold white]\nChoose if you want to use context agent for memory:[/bold white]"
-    )
-    console.print("1. [red]Yes[/red] - Use context agent for memory")
-    console.print("2. [red]No[/red] [bold dim](default)[/bold dim]")
-    console.print()
-
-    while True:
-        mode_choice = IntPrompt.ask("Mode", choices=["1", "2"], default="2")
-        if mode_choice == "1":
-            use_context = True
-            console.print("[bold red]Using context agent for memory[/bold red]")
-            break
-        else:
-            use_context = False
-            console.print("[bold red]Not using context agent for memory[/bold red]")
-            break
-    return use_context
 
 
 def handle_agents_command(user_msg: str, agents: dict, agent: Agent) -> Agent:
@@ -291,146 +270,50 @@ def help_panel():
 
 
 # Quit application
-def handle_quit(
-    user_msg, inputs, agent, agents, hierarchy_mode, interaction_mode, use_context_agent
-):
-    return (
-        True,
-        True,
-        inputs,
-        agent,
-        agents,
-        hierarchy_mode,
-        interaction_mode,
-        use_context_agent,
-    )
+def handle_quit(user_msg, inputs, agent, agents):
+    return (True, True, inputs, agent, agents)
 
 
 # Clear conversation
-def handle_clear(
-    user_msg, inputs, agent, agents, hierarchy_mode, interaction_mode, use_context_agent
-):
+def handle_clear(user_msg, inputs, agent, agents):
     console.clear()
     current_display = str(agent.name).capitalize()
     console.print(f"[dim]Current agent: {current_display}[/dim]")
-    return (
-        False,
-        True,
-        inputs,
-        agent,
-        agents,
-        hierarchy_mode,
-        interaction_mode,
-        use_context_agent,
-    )
+    return (False, True, inputs, agent, agents)
 
 
 # Show conversation history
-def handle_history(
-    user_msg, inputs, agent, agents, hierarchy_mode, interaction_mode, use_context_agent
-):
+def handle_history(user_msg, inputs, agent, agents):
     display_history(inputs)
-    return (
-        False,
-        True,
-        inputs,
-        agent,
-        agents,
-        hierarchy_mode,
-        interaction_mode,
-        use_context_agent,
-    )
+    return (False, True, inputs, agent, agents)
 
 
 # Change hierarchy mode
-def handle_hierarchy(
-    user_msg, inputs, agent, agents, hierarchy_mode, interaction_mode, use_context_agent
-):
+def handle_hierarchy(user_msg, inputs, agent, agents):
     hierarchy_mode = select_hierarchy_mode()
-    return (
-        False,
-        True,
-        inputs,
-        agent,
-        agents,
-        hierarchy_mode,
-        interaction_mode,
-        use_context_agent,
-    )
+    return (False, True, inputs, agent, agents)
 
 
 # Show help panel
-def handle_help(
-    user_msg, inputs, agent, agents, hierarchy_mode, interaction_mode, use_context_agent
-):
+def handle_help(user_msg, inputs, agent, agents):
     help_panel()
-    return (
-        False,
-        True,
-        inputs,
-        agent,
-        agents,
-        hierarchy_mode,
-        interaction_mode,
-        use_context_agent,
-    )
+    return (False, True, inputs, agent, agents)
 
 
 # Clear conversation history
-def handle_clear_history(
-    user_msg, inputs, agent, agents, hierarchy_mode, interaction_mode, use_context_agent
-):
+def handle_clear_history(user_msg, inputs, agent, agents):
     inputs.clear()
     console.clear()
     console.print("[bold red]🔄 Conversation history cleared![/bold red]\n")
     current_display = str(agent.name).capitalize()
     console.print(f"[dim]Current agent: {current_display}[/dim]")
-    return (
-        False,
-        True,
-        inputs,
-        agent,
-        agents,
-        hierarchy_mode,
-        interaction_mode,
-        use_context_agent,
-    )
+    return (False, True, inputs, agent, agents)
 
 
 # List and switch agents
-def handle_agents(
-    user_msg, inputs, agent, agents, hierarchy_mode, interaction_mode, use_context_agent
-):
+def handle_agents(user_msg, inputs, agent, agents):
     agent = handle_agents_command(user_msg, agents, agent)
-    return (
-        False,
-        True,
-        inputs,
-        agent,
-        agents,
-        hierarchy_mode,
-        interaction_mode,
-        use_context_agent,
-    )
-
-
-# Toggle context agent
-def handle_context(
-    user_msg, inputs, agent, agents, hierarchy_mode, interaction_mode, use_context_agent
-):
-    use_context_agent = select_context_agent_mode()
-    status = "enabled" if use_context_agent else "disabled"
-    console.print(f"[bold red]Context agent: {status}[/bold red]")
-    return (
-        False,
-        True,
-        inputs,
-        agent,
-        agents,
-        hierarchy_mode,
-        interaction_mode,
-        use_context_agent,
-    )
+    return (False, True, inputs, agent, agents)
 
 
 # Command registry
@@ -445,21 +328,6 @@ COMMANDS = {
         "description": "Show conversation history",
         "handler": handle_history,
     },
-    # "agents": {
-    #     "aliases": ["/agents", "/a"],
-    #     "description": "List and switch agents",
-    #     "handler": handle_agents,
-    # },
-    # "hierarchy": {
-    #     "aliases": ["/hierarchy", "/hmode"],
-    #     "description": "Change hierarchy mode",
-    #     "handler": handle_hierarchy,
-    # },
-    # "context": {
-    #     "aliases": ["/context", "/ctx"],
-    #     "description": "Toggle context agent for memory",
-    #     "handler": handle_context,
-    # },
     "clear": {
         "aliases": ["/clear", "/c"],
         "description": "Clear screen",
@@ -480,43 +348,20 @@ COMMANDS = {
 
 # Handle slash commands
 def slash_commands(
-    user_msg: str,
-    inputs: list[TResponseInputItem],
-    agent: Agent,
-    agents: dict,
-    hierarchy_mode: str,
-    interaction_mode: str,
-    use_context_agent: bool,
-) -> tuple[bool, bool, list[TResponseInputItem], Agent, dict, str, str, bool]:
+    user_msg: str, inputs: list[TResponseInputItem], agent: Agent, agents: dict
+) -> tuple[bool, bool, list[TResponseInputItem], Agent, dict]:
     """
     Handle special commands like quit and clear.
     """
     for cmd_info in COMMANDS.values():
         if user_msg.lower().split()[0] in [a.lower() for a in cmd_info["aliases"]]:
-            return cmd_info["handler"](
-                user_msg,
-                inputs,
-                agent,
-                agents,
-                hierarchy_mode,
-                interaction_mode,
-                use_context_agent,
-            )
-    return (
-        False,
-        False,
-        inputs,
-        agent,
-        agents,
-        hierarchy_mode,
-        interaction_mode,
-        use_context_agent,
-    )
+            return cmd_info["handler"](user_msg, inputs, agent, agents)
+    return (False, False, inputs, agent, agents)
 
 
 # Stream agent response with rich live updates
 async def stream_agent_response(
-    agent: Agent, inputs: list[TResponseInputItem], hierarchy_mode: str
+    agent: Agent, inputs: list[TResponseInputItem], hierarchy_mode: str = "managerial"
 ) -> tuple[Agent, RunResultStreaming]:
     """
     Stream the agent's response and handle events.
@@ -720,14 +565,6 @@ async def stream_agent_response(
     return agent, result
 
 
-async def agentic_chat():
-    pass
-
-
-async def conversational_chat():
-    pass
-
-
 # Main CLI loop
 async def run_cli(agents: dict[str, Agent], starting_agent: Agent):
     """
@@ -737,14 +574,6 @@ async def run_cli(agents: dict[str, Agent], starting_agent: Agent):
     :param starting_agent: The agent to start the conversation with
     """
 
-    tts_client: TTS = None  # type: ignore
-    session_context: str = ""
-    try:
-        hierarchy_mode = "managerial"
-        interaction_mode = "TEXT"
-        use_context_agent = False
-    except Exception as e:
-        raise Exception(f"Error selecting modes")
     agent = starting_agent
     welcome_panel()
     inputs: List[TResponseInputItem] = [
@@ -760,9 +589,6 @@ async def run_cli(agents: dict[str, Agent], starting_agent: Agent):
 
     while True:
 
-        if session_context and use_context_agent:
-            inputs = [{"content": session_context, "role": "assistant"}]
-
         user_msg = Prompt.ask("\n[dim]You[/dim]")
         if not user_msg:
             continue
@@ -773,63 +599,17 @@ async def run_cli(agents: dict[str, Agent], starting_agent: Agent):
                 user_msg = user_msg.strip()
             user_msg = user_msg.replace("<ml>", "").replace("</ml>", "").strip()
         # Handle special commands
-        (
-            quit_flag,
-            skip,
-            inputs,
-            agent,
-            agents,
-            hierarchy_mode,
-            interaction_mode,
-            use_context_agent,
-        ) = slash_commands(
-            user_msg.lower(),
-            inputs,
-            agent,
-            agents,
-            hierarchy_mode,
-            interaction_mode,
-            use_context_agent,
+        (quit_flag, skip, inputs, agent, agents) = slash_commands(
+            user_msg.lower(), inputs, agent, agents
         )
         if quit_flag:
-            if tts_client:
-                tts_client.shutdown()
             break
         if skip:
             continue
 
         inputs.append({"content": user_msg, "role": "user"})
 
-        if use_context_agent:
-
-            _, context_result = await stream_agent_response(
-                context_agent.agent, inputs, "managerial"
-            )
-
-            if context_result.final_output != session_context:
-                session_context = str(context_result.final_output).strip()
-                console.print(f"[dim]Context updated.[/dim]")
-
-            if session_context:
-                inputs = [
-                    {"role": "assistant", "content": session_context},
-                    {"role": "user", "content": user_msg},
-                ]
-
         # Stream the response
-        agent, result = await stream_agent_response(agent, inputs, hierarchy_mode)
+        agent, result = await stream_agent_response(agent, inputs)
 
         inputs = result.to_input_list()
-
-        if use_context_agent:
-            for input_item in inputs:
-                if input_item.get("type") in ["function_call", "function_call_output"]:
-
-                    _, context_result = await stream_agent_response(
-                        context_agent.agent, inputs, "managerial"
-                    )
-
-                    if context_result.final_output:
-                        session_context = str(context_result.final_output).strip()
-                        console.print(f"[dim]Context updated.[/dim]")
-                    break

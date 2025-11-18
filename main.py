@@ -1,6 +1,6 @@
 import asyncio
 
-from cli.v1 import run_cli
+from cli.ui import run_cli
 
 from agent_runtime import get_agent_registry
 
