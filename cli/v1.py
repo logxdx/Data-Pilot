@@ -28,6 +28,7 @@ from rich.text import Text
 
 from .art import get_art
 from config.agent_config import Version, MAX_TURNS
+
 # from stt.WhisperSTT import STT
 from my_agents import context_agent
 
@@ -42,14 +43,6 @@ console.clear()
 MESSAGE_HISTORY: list[TResponseInputItem] = []
 
 welcome_art = get_art()
-_tts = None
-
-
-def get_tts():
-    global _tts
-    if _tts is None:
-        _tts = TTS()
-    return _tts
 
 
 def welcome_panel():
@@ -114,28 +107,6 @@ def select_hierarchy_mode():
             console.print("[bold red]Collaborative mode[/bold red]")
             break
     return hierarchy_mode
-
-
-def select_interaction_mode():
-    """
-    Prompt user to select interaction mode.
-    """
-    console.print("[bold white]\nChoose your preferred interaction mode:[/bold white]")
-    console.print("1. [red]Text[/red] [bold dim](default)[/bold dim]")
-    console.print("2. [red]Voice[/red] - STT (Whisper) + TTS (Piper)")
-    console.print()
-
-    while True:
-        mode_choice = IntPrompt.ask("Mode", choices=["1", "2"], default=1)
-        if mode_choice == 1:
-            interaction_mode = "text"
-            console.print("[bold red]Text mode[/bold red]")
-            break
-        else:
-            interaction_mode = "voice"
-            console.print("[bold red]Voice mode[/bold red]")
-            break
-    return interaction_mode
 
 
 def select_context_agent_mode():
@@ -443,23 +414,6 @@ def handle_agents(
     )
 
 
-# Change interaction mode
-def handle_interaction(
-    user_msg, inputs, agent, agents, hierarchy_mode, interaction_mode, use_context_agent
-):
-    interaction_mode = select_interaction_mode()
-    return (
-        False,
-        True,
-        inputs,
-        agent,
-        agents,
-        hierarchy_mode,
-        interaction_mode,
-        use_context_agent,
-    )
-
-
 # Toggle context agent
 def handle_context(
     user_msg, inputs, agent, agents, hierarchy_mode, interaction_mode, use_context_agent
@@ -477,13 +431,6 @@ def handle_context(
         interaction_mode,
         use_context_agent,
     )
-
-def text2speech(user_msg, inputs, *, args):
-    tts_client = get_tts()
-    try:
-        tts_client.speak(str(inputs[-1]))
-    except Exception as e:
-        console.print(f"Error: {e}")
 
 
 # Command registry
@@ -507,11 +454,6 @@ COMMANDS = {
         "aliases": ["/hierarchy", "/hmode"],
         "description": "Change hierarchy mode",
         "handler": handle_hierarchy,
-    },
-    "interaction": {
-        "aliases": ["/interaction", "/imode"],
-        "description": "Change interaction mode",
-        "handler": handle_interaction,
     },
     "context": {
         "aliases": ["/context", "/ctx"],
@@ -799,7 +741,7 @@ async def run_cli(agents: dict[str, Agent], starting_agent: Agent):
     session_context: str = ""
     try:
         hierarchy_mode = select_hierarchy_mode()
-        interaction_mode = select_interaction_mode()
+        interaction_mode = "TEXT"
         use_context_agent = select_context_agent_mode()
     except Exception as e:
         raise Exception(f"Error selecting modes")
@@ -815,7 +757,6 @@ async def run_cli(agents: dict[str, Agent], starting_agent: Agent):
     agent, result = await stream_agent_response(agent, inputs, "managerial")
     inputs.clear()
     skip: bool = False
-
 
     while True:
 
@@ -861,10 +802,6 @@ async def run_cli(agents: dict[str, Agent], starting_agent: Agent):
 
         if use_context_agent:
 
-            # context_result = await Runner.run(
-            #     starting_agent=context_agent.agent, input=inputs, max_turns=MAX_TURNS
-            # )
-
             _, context_result = await stream_agent_response(
                 context_agent.agent, inputs, "managerial"
             )
@@ -887,12 +824,6 @@ async def run_cli(agents: dict[str, Agent], starting_agent: Agent):
         if use_context_agent:
             for input_item in inputs:
                 if input_item.get("type") in ["function_call", "function_call_output"]:
-
-                    # context_result = await Runner.run(
-                    #     starting_agent=context_agent.agent,
-                    #     input=inputs,
-                    #     max_turns=MAX_TURNS,
-                    # )
 
                     _, context_result = await stream_agent_response(
                         context_agent.agent, inputs, "managerial"
