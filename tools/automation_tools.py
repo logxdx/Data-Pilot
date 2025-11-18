@@ -20,11 +20,6 @@ from tools.utils.dataset_utils import (
     sample_if_needed,
 )
 from tools.utils.filesystem import SANDBOX_PATH, AccessDeniedError
-from .data_tools import (
-    dataset_overview,
-    dataset_quality_report,
-    dataset_correlation_report,
-)
 
 if TYPE_CHECKING:  # pragma: no cover
     from pandas import DataFrame
@@ -110,7 +105,7 @@ def _build_preprocessor(df: "DataFrame") -> tuple[ColumnTransformer, list[str], 
     return ColumnTransformer(transformers), numeric_cols, categorical_cols
 
 
-def _infer_problem_type(y: "pd.Series", override: Literal["auto", "classification", "regression"]) -> str:
+def _infer_problem_type(y: pd.Series, override: Literal["auto", "classification", "regression"]) -> str:
     if override in {"classification", "regression"}:
         return override
 
@@ -164,18 +159,6 @@ def _model_configs(problem_type: str, random_state: int):
 
 def _serialize_metrics(metrics: dict) -> str:
     return json.dumps(metrics, indent=2, default=lambda o: float(o))
-
-
-@function_tool
-def automated_eda_report(relative_path: str, target_column: str | None = None, sample_rows: int = 5000) -> str:
-    """Compose overview, quality, and correlation reports in a single call."""
-
-    sections = [
-        dataset_overview(relative_path, sample_rows=min(sample_rows, 25)),
-        dataset_quality_report(relative_path, sample_rows=sample_rows),
-        dataset_correlation_report(relative_path, target_column=target_column, sample_rows=sample_rows),
-    ]
-    return "\n\n---\n\n".join(sections)
 
 
 @function_tool
@@ -287,6 +270,5 @@ def automated_modeling_workflow(
 
 
 AUTOMATION_TOOLS = [
-    automated_eda_report,
     automated_modeling_workflow,
 ]

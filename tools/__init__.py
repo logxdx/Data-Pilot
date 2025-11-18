@@ -23,7 +23,6 @@ from .data_tools import (
     dataset_correlation_report,
 )
 from .automation_tools import (
-    automated_eda_report,
     automated_modeling_workflow,
 )
 from .misc_tools import get_current_datetime, execute_code
@@ -63,7 +62,6 @@ __all__ = [
     "dataset_quality_report",
     "dataset_correlation_report",
     # Automation Tools
-    "automated_eda_report",
     "automated_modeling_workflow",
     # Misc Tools
     "get_current_datetime",
@@ -75,7 +73,6 @@ __all__ = [
     # Web Tools
     "open_url_in_browser",
     "get_weather_info",
-    "scrape_url",
     "download_audio",
     "download_video",
 ]
